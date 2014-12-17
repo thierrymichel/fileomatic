@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "A queue system",
   "main": "server.js",
+  "private": true,
   "scripts": {
+    "start": "nodemon --debug server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/thierrymichel/misterq/issues"
   },
-  "homepage": "https://github.com/thierrymichel/misterq"
+  "homepage": "https://github.com/thierrymichel/misterq",
+  "dependencies": {
+    "colors": "^1.0.3",
+    "express": "^4.10.6"
+  }
 }
