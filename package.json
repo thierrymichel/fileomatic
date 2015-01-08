@@ -1,6 +1,9 @@
 {
   "name": "misterQ",
   "version": "0.0.1",
+  "engines": {
+    "node": "> 0.10"
+  },
   "description": "A queue system",
   "main": "server.js",
   "private": true,
@@ -25,6 +28,8 @@
   "homepage": "https://github.com/thierrymichel/misterq",
   "dependencies": {
     "colors": "^1.0.3",
-    "express": "^4.10.6"
+    "express": "^4.10.6",
+    "jade": "^1.8.2",
+    "morgan": "^1.5.0"
   }
 }
