@@ -11,5 +11,9 @@ block content
   else
     p Quel chance, tu es le premier!…
 
+  if !queueActive
+    form(action="/queues/#{queueId}/join" method="post")
+      button(type="submit") join
+
   p
     a(href="/queues/#{queueId}/leave") leave

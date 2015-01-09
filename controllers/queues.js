@@ -10,7 +10,7 @@ var async = require('async');
 var Queue = require('../models/queue');
 var Log   = require('../models/log');
 
-function viewQueue(req, res) {
+function listLogs(req, res) {
   // si session, on affiche les infos de la file
   if (req.session.id) {
     Log
@@ -20,6 +20,7 @@ function viewQueue(req, res) {
           user: req.session.pseudo,
           queueName: req.session.queueName,
           queueId: req.params.id,
+          queueActive: req.session.queueActive,
           logs: logs
         });
       });
@@ -30,7 +31,7 @@ function viewQueue(req, res) {
   }
 }
 
-function joinQueue(req, res) {
+function viewQueue(req, res) {
   console.log(req.body.pseudo + ' joined #' + req.params.id);
 
   async.parallel(
@@ -69,8 +70,16 @@ function joinQueue(req, res) {
   );
 }
 
+function joinQueue(req, res) {
+  // update user/queue log...
+  Log.findByIdAndUpdate(req.session.id, { active: true }, function () {
+    req.session.queueActive = true;
+    req.flash('success', 'Wait a minute!');
+    res.redirect('/queues/' + req.session.queueId);
+  });
+}
+
 function leaveQueue(req, res) {
-  // console.log(req.session.pseudo + ' leaved #' + req.params.id);
   // delete user/queue log...
   Log.findByIdAndRemove(req.session.id, function () {
     req.flash('success', 'Goodbye!');
@@ -81,25 +90,8 @@ function leaveQueue(req, res) {
 
 module.exports = function queueController(app) {
   app.route('/queues/:id')
-    .get(viewQueue)
-    .post(joinQueue);
+    .get(listLogs)
+    .post(viewQueue);
+  app.post('/queues/:id/join', joinQueue);
   app.get('/queues/:id/leave', leaveQueue);
 };
-
-/*
-function joinQueue(req, res) {
-  console.log(req.body.pseudo + ' joined #' + req.params.id);
-  res.render('queues/index');
-}
-
-function leaveQueue(req, res) {
-  console.log('leave');
-  res.redirect('/');
-}
-
-
-module.exports = function queueController(app) {
-  app.post('/queues/:id/join', joinQueue);
-  app.post('/queues/:id/leave', leaveQueue);
-};
-*/

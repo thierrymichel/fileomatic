@@ -14,7 +14,7 @@ var queuesLogSchema = mongoose.Schema({
 _.extend(queuesLogSchema.statics, {
   getLogs: function getQueueLogs(queueId) {
     return this
-      .find({ queueId: queueId })
+      .find({ queueId: queueId, active: true })
       .sort({ queuedAt: -1 })
       .exec();
   }
