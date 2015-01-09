@@ -6,6 +6,12 @@ function setupHelpers(req, res, next) {
   next();
 }
 
+function setupSessionInfos(req, res, next) {
+  res.locals.session = req.session;
+  next();
+}
+
 module.exports = function mainHelpers(app) {
   app.use(setupHelpers);
+  app.use(setupSessionInfos);
 };

@@ -17,10 +17,12 @@ function listLogs(req, res) {
       .getLogs(req.params.id)
       .then(function (logs) {
         res.render('queue', {
+          /* via session (helpers)
           user: req.session.pseudo,
           queueName: req.session.queueName,
           queueId: req.params.id,
           queueActive: req.session.queueActive,
+          */
           logs: logs
         });
       });

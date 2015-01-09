@@ -23,4 +23,5 @@ _.extend(queueSchema.statics, {
       .exec();
   }
 });
+
 module.exports = mongoose.model('Queue', queueSchema);
