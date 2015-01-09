@@ -7,6 +7,12 @@ html(lang="fr")
   body
     .container
       h1= title
+
+      include _flashes
+
       block content
+
       footer 
-        small © tm 2014
+        small © tm 2015
+      // script(src="/socket.io/socket.io.js")
+      script(src="/js/main.js")

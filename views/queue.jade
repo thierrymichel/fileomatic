@@ -1,0 +1,15 @@
+extend _layout
+
+block content
+  h2 Hello #{user}, welcome to #{queueName}
+
+  if logs.length
+    h3 All logs
+    ul
+      each log in logs
+        li #{log.pseudo} @ #{log.queuedAt}
+  else
+    p Quel chance, tu es le premier!…
+
+  p
+    a(href="/queues/#{queueId}/leave") leave

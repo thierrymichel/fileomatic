@@ -1,0 +1,23 @@
+extend _layout
+
+block content
+  h2 Admin
+
+  if queues.length
+    h3 All queues
+    ul
+      each queue in queues
+        li #{queue.name} #[a(href="/admin/queues/#{queue._id}?_method=delete") delete]
+  else
+    p Pas encore de files…
+
+  form(action="/admin/queues" method="post")
+    fieldset
+      legend New queue
+      label(for="name") Name
+        input(type="text" name="name" id="name" required)
+      label(for="description") description
+        textarea(name="description" id="description")
+      button(type="submit") Ajouter
+  p
+    a(href="/") home

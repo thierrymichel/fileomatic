@@ -2,10 +2,18 @@ extend _layout
 
 block content
   h2 Queues
-  ul
-    li
-      a(href="/queue/ingrwf03/") ingrwf03
-    li
-      a(href="/queue/ingrwi06/") ingrwi06
+
+  if queues.length
+    h3 All queues
+    ul
+      each queue in queues
+        li #{queue.name} 
+          form(action="/queues/#{queue._id}" method="post")
+            label(for="pseudo") pseudo
+              input(type="text" name="pseudo" required)
+            button(type="submit") join
+  else
+    p Pas encore de files…
+
   p
     a(href="/") back
