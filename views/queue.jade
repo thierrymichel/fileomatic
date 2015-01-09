@@ -7,7 +7,7 @@ block content
     h3 All logs
     ul
       each log in logs
-        li #{log.pseudo} @ #{log.queuedAt}
+        li #{log.pseudo} @ #{formatStamp(log.queuedAt)}
   else
     p Quel chance, tu es le premier!…
 

@@ -6,6 +6,7 @@
  */
 
 var Queue = require('../models/queue');
+var _ = require('underscore');
 
 module.exports = function homeController(app) {
   app.get('/', function (req, res) {
