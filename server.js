@@ -52,6 +52,7 @@ require('./helpers/main')(app);
 require('./controllers/home')(app);
 require('./controllers/queues')(app);
 require('./controllers/admin')(app);
+require('./controllers/web-sockets')(server);
 
 require('./models/connection')(function () {
   console.log('✔︎ Connected to mongoDB database'.green);

@@ -5,11 +5,12 @@ block content
 
   if logs.length
     h3 All logs
-    ul
+    ul.logs
       each log in logs
-        li #{log.pseudo} @ #{formatStamp(log.queuedAt)}
+        li #{log.pseudo} (@#{formatStamp(log.queuedAt)})
   else
     p Quel chance, tu es le premier!…
+    ul.logs
 
   if !session.queueActive
     form(action="/queues/#{session.queueId}/join" method="post")

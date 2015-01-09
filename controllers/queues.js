@@ -6,9 +6,10 @@
  * Queue controller
  */
 
-var async = require('async');
-var Queue = require('../models/queue');
-var Log   = require('../models/log');
+var async     = require('async');
+var Queue     = require('../models/queue');
+var Log       = require('../models/log');
+var realTime  = require('../controllers/web-sockets');
 
 function listLogs(req, res) {
   // si session, on affiche les infos de la file
@@ -75,6 +76,7 @@ function viewQueue(req, res) {
 function joinQueue(req, res) {
   // update user/queue log...
   Log.findByIdAndUpdate(req.session.id, { active: true }, function () {
+    realTime.sockets.emit('test', { pseudo: req.session.pseudo });
     req.session.queueActive = true;
     req.flash('success', 'Wait a minute!');
     res.redirect('/queues/' + req.session.queueId);
