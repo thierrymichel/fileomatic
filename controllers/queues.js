@@ -75,10 +75,13 @@ function viewQueue(req, res) {
 
 function joinQueue(req, res) {
   // update user/queue log...
-  Log.findByIdAndUpdate(req.session.id, { active: true }, function () {
-    realTime.sockets.emit('test', { pseudo: req.session.pseudo });
+  Log.findByIdAndUpdate(req.session.id, { queuedAt: Date.now(), active: true }, function () {
+    realTime.sockets.emit('join', {
+      id: req.session.id,
+      pseudo: req.session.pseudo
+    });
     req.session.queueActive = true;
-    req.flash('success', 'Wait a minute!');
+    // req.flash('success', 'Wait a minute!');
     res.redirect('/queues/' + req.session.queueId);
   });
 }
@@ -86,7 +89,11 @@ function joinQueue(req, res) {
 function leaveQueue(req, res) {
   // delete user/queue log...
   Log.findByIdAndRemove(req.session.id, function () {
-    req.flash('success', 'Goodbye!');
+    realTime.sockets.emit('leave', {
+      test: 'foo',
+      id: req.session.id
+    });
+    // req.flash('success', 'Goodbye!');
     req.session = null;   // "fin" session
     res.redirect('/');
   });

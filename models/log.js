@@ -7,7 +7,7 @@ var _ = require('underscore');
 var queuesLogSchema = mongoose.Schema({
   pseudo:   { type: String, required: true },
   queueId:  { type: String, ref: 'Queue', required: true },
-  queuedAt: { type: Date, default: Date.now },
+  queuedAt: { type: Date },
   active:   { type: Boolean, default: false}
 });
 
@@ -15,7 +15,7 @@ _.extend(queuesLogSchema.statics, {
   getLogs: function getQueueLogs(queueId) {
     return this
       .find({ queueId: queueId, active: true })
-      .sort({ queuedAt: -1 })
+      .sort({ queuedAt: 'asc' })
       .exec();
   }
 });

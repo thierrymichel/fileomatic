@@ -7,7 +7,7 @@ block content
     h3 All logs
     ul.logs
       each log in logs
-        li #{log.pseudo} (@#{formatStamp(log.queuedAt)})
+        li(data-q-id="#{log.id}") #{log.pseudo} (@#{formatStamp(log.queuedAt)})
   else
     p Quel chance, tu es le premier!…
     ul.logs

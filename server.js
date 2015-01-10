@@ -47,6 +47,7 @@ app.use(cookieSession({ name: 'misterq:session', secret: "7cd2163777f65b9df98195
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(flash());
 app.use(serveStatic(path.join(__dirname, 'public')));
+app.use(serveStatic(path.join(__dirname, 'bower_components')));
 
 require('./helpers/main')(app);
 require('./controllers/home')(app);
@@ -62,22 +63,3 @@ require('./models/connection')(function () {
     console.log(msg.green);
   });
 });
-
-
-
-
-/*
- * socket -> à déplacer…
- */
-/*
-var io = require('socket.io')(server);
-io.on('connection', function (socket) {
-  // socket.emit('news', { hello: 'world' });
-  // socket.on('my other event', function (data) {
-  //   console.log(data);
-  // });
-  console.log('client connected');
-  socket.emit('test', {msg: 'connected'});
-  socket.broadcast.emit('test', {msg: 'new connected'});
-});
-*/
