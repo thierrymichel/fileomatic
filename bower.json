@@ -1,0 +1,30 @@
+{
+  "name": "misterQ",
+  "version": "0.0.1",
+  "homepage": "https://github.com/thierrymichel/misterq",
+  "authors": [
+    "Thierry Michel <thmichel@gmail.com>"
+  ],
+  "description": "A queue system",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "cepegra",
+    "queue",
+    "ingrwf"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "normalize.css": "~3.0.2"
+  }
+}
