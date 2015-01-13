@@ -9,18 +9,19 @@
 
 require('colors'); // les logs en couleurs !
 
-var bodyParser  = require('body-parser'),     // permet de récupérer le 'body' de la 'request' au format json
-  cookieSession = require('cookie-session'),  // gestion … cookies/sessions ;P
-  express       = require('express'),         // main application framework
-  flash         = require('connect-flash'),   // système de message 'flash' (via session)
-  http          = require('http'),            // interface http (client/serveur)
-  morgan        = require('morgan'),          // http request logger (logs automatique des requêtes)
-  path          = require('path'),            // gestion des chemins
-  serveStatic   = require('serve-static'),    // routage auto pour fichiers statiques
-  util          = require('util'),            // utilitaires divers
+var bodyParser  = require('body-parser');     // permet de récupérer le 'body' de la 'request' au format json
+var cookieParser  = require('cookie-parser');  // gestion sessions via cookies
+var cookieSession = require('cookie-session');  // gestion sessions via cookies
+var express       = require('express');         // main application framework
+var flash         = require('connect-flash');   // système de message 'flash' (via session)
+var http          = require('http');            // interface http (client/serveur)
+var morgan        = require('morgan');          // http request logger (logs automatique des requêtes)
+var path          = require('path');            // gestion des chemins
+var serveStatic   = require('serve-static');    // routage auto pour fichiers statiques
+var util          = require('util');            // utilitaires divers
 
-  app           = express(),
-  server        = http.createServer(app);
+var app           = express();
+var server        = http.createServer(app);
 
 
 
@@ -43,6 +44,7 @@ app.locals.pretty = devMode;
  */
 
 app.use(morgan(devMode ? 'dev' : 'common'));
+app.use(cookieParser('misterq:pseudo'));
 app.use(cookieSession({ name: 'misterq:session', secret: "7cd2163777f65b9df981952fbe4e1159" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(flash());
@@ -51,7 +53,8 @@ app.use(serveStatic(path.join(__dirname, 'bower_components')));
 
 require('./helpers/main')(app);
 require('./controllers/home')(app);
-require('./controllers/queues')(app);
+require('./controllers/groups')(app);
+require('./controllers/users')(app);
 require('./controllers/admin')(app);
 require('./controllers/web-sockets')(server);
 

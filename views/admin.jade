@@ -1,23 +1,20 @@
-extend _layout
+extends _layout
 
 block content
-  h2 Admin
+  h2 Admin groups
 
-  if queues.length
-    h3 All queues
+  if groups.length
     ul
-      each queue in queues
-        li #{queue.name} #[a(href="/admin/queues/#{queue._id}?_method=delete") delete]
-  else
-    p Pas encore de files…
+      each group in groups
+        li #{group.name} #[a(href="/admin/groups/#{group._id}?_method=DELETE") delete]
 
-  form(action="/admin/queues" method="post")
+  form(action="/admin/groups" method="post")
     fieldset
-      legend New queue
+      legend Create new group
       label(for="name") Name
         input(type="text" name="name" id="name" required)
-      label(for="description") description
-        textarea(name="description" id="description")
-      button(type="submit") Ajouter
+      label(for="description") Description
+        textarea(name="description" id="description" required)
+    button(type="submit") Create
   p
-    a(href="/") home
+    a(href="/") homepage

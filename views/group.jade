@@ -1,0 +1,32 @@
+extends _layout
+
+block content
+  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-status="#{session.userStatus}")
+    h2 Hi #{session.userPseudo}, you are into #{session.groupName}
+    h1 Status = #{session.userStatus}
+
+    div.group__serving
+      h3 serving
+      ul.list
+      if server
+        li(data-q-id="#{pender.id}") #{pender.pseudo}
+
+    div.group__pending
+      h3 pending
+      ol.list
+        if penders.length
+          each pender in penders
+            li(data-q-id="#{pender.id}") #{pender.pseudo}
+
+    div.group__watching
+      h3 watching
+      ul.list
+        if watchers.length
+          each watcher in watchers
+            li(data-q-id="#{watcher.id}") #{watcher.pseudo}
+
+      button.start(type="button") Take a ticket
+
+    if session.userStatus
+      form.leave(action="/groups/#{session.groupId}?_method=DELETE" method="post")
+        button(type="submit") leave

@@ -1,12 +1,16 @@
-/*jslint node: true, indent: 2 */
+/*jslint node: true, nomen: true, indent: 2 */
 'use strict';
 
 var moment = require('moment');
+var zeroFill = require('zero-fill');
 var _ = require('underscore');
 
 var HELPERS = {
   formatStamp: function formatStamp(date) {
     return moment(date).format('dddd D MMMM à HH:mm');
+  },
+  formatZero: function formatZero(int) {
+    return zeroFill(3, int);
   }
 };
 
@@ -14,6 +18,7 @@ function setupHelpers(req, res, next) {
   res.locals.flash = req.flash();
 
   res.locals.session = req.session;
+  res.locals.cookie = req.cookies;
 
   var lang = _
     .chain(req.acceptsLanguages())    // renvoie un objet encapsulé permettant le chaînage (à la jQuery)

@@ -1,19 +1,20 @@
-/*jslint node: true, indent: 2 */
+/*jslint node: true, nomen: true, indent: 2 */
 'use strict';
 
 /*
  * Home controller
  */
 
-var Queue = require('../models/queue');
+var Group = require('../models/group');
 var _ = require('underscore');
+var realTime  = require('../controllers/web-sockets');
 
 module.exports = function homeController(app) {
   app.get('/', function (req, res) {
-    Queue
+    Group
       .getAll()
-      .then(function (queues) {
-        res.render('home', { title: 'Welcome to MisterQ!', queues: queues });
+      .then(function (groups) {
+        res.render('home', { groups: groups });
       });
   });
 };
