@@ -6,7 +6,7 @@
  * Queue controller
  */
 
-var async     = require('async');
+// var async     = require('async');
 var Q         = require('q');
 var Group     = require('../models/group');
 var User      = require('../models/user');

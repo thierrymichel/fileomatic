@@ -71,12 +71,11 @@ function joinGroup(req, res) {
         req.session.groupName = group.name;
 
         // notify all the users (may be should use broadcast ?)
-        // realTime.sockets.emit('joining', {
-        //   action: 'joining',
-        //   id: req.session.userId,
-        //   pseudo: req.session.userPseudo
-        // });
-        // res.redirect('/groups/' + req.session.groupId);
+        realTime.sockets.emit('joining', {
+          action: 'joining',
+          id: req.session.userId,
+          pseudo: req.session.userPseudo
+        });
 
         // Get the content of the group
         Q

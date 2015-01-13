@@ -4,6 +4,7 @@ block content
   div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-status="#{session.userStatus}")
     h2 Hi #{session.userPseudo}, you are into #{session.groupName}
     h1 Status = #{session.userStatus}
+    h1 Id = #{session.userId}
 
     div.group__serving
       h3 serving
@@ -23,9 +24,9 @@ block content
       ul.list
         if watchers.length
           each watcher in watchers
-            li(data-q-id="#{watcher.id}") #{watcher.pseudo}
+            li(data-q-id="#{watcher.id}" class=(watcher.id == session.userId ? "active" : "")) #{watcher.pseudo}
 
-      button.start(type="button") Take a ticket
+      button.get-in(type="button") Take a ticket
 
     if session.userStatus
       form.leave(action="/groups/#{session.groupId}?_method=DELETE" method="post")

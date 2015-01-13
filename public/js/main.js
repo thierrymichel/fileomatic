@@ -8,6 +8,10 @@
 
   function initGroup() {
 
+    var url = $group.data('q-url'),
+      $getIn = $('.get-in'),
+      $getOut = $('<a href="#" class="get-out">cancel</a>').hide();
+
     /*
      * window handling
      */
@@ -28,6 +32,35 @@
       $(window).off('unload');
     });
 
+    /*
+     * Controls / actions
+     */
+
+    $group.find('.active').append($getOut);
+
+    $getIn.on('click', function (e) {
+      e.preventDefault();
+      console.log('get-in');
+
+      $getIn.hide();
+      $group.data('q-status', 'pending');
+
+      $.post(
+        url
+      );
+    });
+
+    $getOut.on('click', function (e) {
+      e.preventDefault();
+      console.log('get-out');
+
+      $getIn.show();
+      $group.data('q-status', 'watching');
+
+      $.post(
+        url + '?_method=DELETE'
+      );
+    });
 
   //   // show/hide controls
   //   if ($group.data('q-status') === 'watching') {
@@ -49,17 +82,6 @@
   //       $group.data('q-url') + '?_method=DELETE'
   //     );
   //   });
-  //   $('.start').on('click', function (e) {
-  //     e.preventDefault();
-  //     console.log('startpending');
-
-  //     $('.start').toggleClass('is-hidden');
-  //     $group.data('q-status', 'pending');
-
-  //     $.post(
-  //       $group.data('q-url')
-  //     );
-  //   });
   }
 
   function initSockets() {
@@ -68,10 +90,10 @@
       .on('connect', function () {
         console.log('register');
         socket.emit('register');
-      });
-/*      .on('joining', function (data) {
+      })
+      .on('joining', function (data) {
         console.log(data.action);
-        $('.group__watching ul').append('<li data-q-id="' + data.id + '">' + data.pseudo + '</li>');
+        $('.group__watching .list').append('<li data-q-id="' + data.id + '">' + data.pseudo + '</li>');
       })
       .on('leaving', function (data) {
         console.log(data.action);
@@ -83,23 +105,24 @@
         console.log(data.action);
         $('[data-q-id="' + data.id + '"]').fadeOut(300, function () {
           $(this)
-            .appendTo('.group__pending ul')
+            .appendTo('.group__pending .list')
             .fadeIn(300)
-            .find('.cancel')
-            .toggleClass('is-hidden');
+            .filter('.active')
+            .find('.get-out')
+            .show();
         });
       })
       .on('watching', function (data) {
         console.log(data.action);
         $('[data-q-id="' + data.id + '"]').fadeOut(300, function () {
           $(this)
-            .appendTo('.group__watching ul')
+            .appendTo('.group__watching .list')
             .fadeIn(300)
-            .find('.cancel')
-            .toggleClass('is-hidden');
+            .filter('.active')
+            .find('.get-out')
+            .hide();
         });
       });
-*/
   }
 
   function init() {
