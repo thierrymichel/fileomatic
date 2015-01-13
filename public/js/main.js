@@ -4,13 +4,16 @@
 (function ($) {
   'use strict';
 
-  var $group;
+  var $group,
+    groupId;
 
   function initGroup() {
 
     var url = $group.data('q-url'),
       $getIn = $('.get-in'),
       $getOut = $('<a href="#" class="get-out">cancel</a>').hide();
+
+    groupId = $group.data('q-group');
 
     /*
      * window handling
@@ -61,27 +64,6 @@
         url + '?_method=DELETE'
       );
     });
-
-  //   // show/hide controls
-  //   if ($group.data('q-status') === 'watching') {
-  //     $('.start').toggleClass('is-hidden');
-  //   }
-  //   if ($group.data('q-status') === 'pending') {
-  //     $('.cancel').toggleClass('is-hidden');
-  //   }
-
-  //   // add actions
-  //   $('.cancel').on('click', function (e) {
-  //     e.preventDefault();
-  //     console.log('(re)startwatching');
-
-  //     $('.start').toggleClass('is-hidden');
-  //     $group.data('q-status', 'watching');
-
-  //     $.post(
-  //       $group.data('q-url') + '?_method=DELETE'
-  //     );
-  //   });
   }
 
   function initSockets() {
@@ -89,7 +71,7 @@
     socket
       .on('connect', function () {
         console.log('register');
-        socket.emit('register');
+        socket.emit('register', { group: groupId });
       })
       .on('joining', function (data) {
         console.log(data.action);

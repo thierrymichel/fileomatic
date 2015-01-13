@@ -16,8 +16,10 @@ var singleton = module.exports = function socketsController(server) {
       .on('disconnect', function () {
         console.log('disconnect on socket #' + socket.id);
       })
-      .on('register', function () {
+      .on('register', function (data) {
         console.log('register on socket #' + socket.id);
+        console.log('data', data);
+        socket.join(data.group);
       });
   });
 

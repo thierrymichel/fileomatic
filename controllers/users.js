@@ -38,7 +38,7 @@ function handleUser(req, res) {
   }
 
   User.findByIdAndUpdate(req.session.userId, changes, function () {
-    realTime.sockets.emit(changes.$set.status, {
+    realTime.sockets.in(req.session.groupId).emit(changes.$set.status, {
       action: changes.$set.status,
       id: req.session.userId
     });

@@ -44,7 +44,7 @@ function joinGroup(req, res) {
       groupId: req.session.groupId
     }, function () {
       console.log('deleted!');
-      realTime.sockets.emit('leaving', {
+      realTime.sockets.in(req.session.groupId).emit('leaving', {
         action: 'leaving',
         id: req.session.userId
       });
@@ -71,7 +71,7 @@ function joinGroup(req, res) {
         req.session.groupName = group.name;
 
         // notify all the users (may be should use broadcast ?)
-        realTime.sockets.emit('joining', {
+        realTime.sockets.in(req.session.groupId).emit('joining', {
           action: 'joining',
           id: req.session.userId,
           pseudo: req.session.userPseudo
@@ -101,7 +101,7 @@ function handleGroup(req, res) {
   switch (method) {
   case 'DELETE':
     User.findByIdAndRemove(req.session.userId, function () {
-      realTime.sockets.emit('leaving', {
+      realTime.sockets.in(req.session.groupId).emit('leaving', {
         action: 'leaving',
         id: req.session.userId
       });

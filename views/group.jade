@@ -1,9 +1,8 @@
 extends _layout
 
 block content
-  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-status="#{session.userStatus}")
+  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-status="#{session.userStatus}" data-q-group="#{session.groupId}")
     h2 Hi #{session.userPseudo}, you are into #{session.groupName}
-    h1 Status = #{session.userStatus}
     h1 Id = #{session.userId}
 
     div.group__serving
