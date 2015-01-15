@@ -35,10 +35,11 @@
       $(window).off('unload');
     });
 
-    /*
-     * Controls / actions
-     */
 
+
+    /*
+     * Controls settings
+     */
     $group.find('.active').append($getOut);
 
     $getIn.on('click', function (e) {
@@ -66,7 +67,11 @@
     });
   }
 
+  /*
+   * Sockets settings
+   */
   function initSockets() {
+    // var socket = io.connect('http://localhost:8080');
     var socket = io.connect('http://localhost:8080');
     socket
       .on('connect', function () {

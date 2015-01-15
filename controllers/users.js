@@ -48,6 +48,6 @@ function handleUser(req, res) {
   });
 }
 
-module.exports = function queueController(app) {
+module.exports = function userController(app) {
   app.post('/groups/:id/users/:usr', handleUser);
 };

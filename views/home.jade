@@ -8,7 +8,8 @@ block content
       li
         label(for="pseudo") Choose a pseudo
           - pseudo = (typeof cookie.pseudo !== 'undefined') ? cookie.pseudo : ''
-          input(type="text" name="pseudo" id="pseudo" value="#{pseudo}" required)
+          - pseudo = (isAdmin) ? 'master' : pseudo
+          input(type="text" name="pseudo" id="pseudo" value="#{pseudo}" required disabled=isAdmin)
       li
         fieldset
           legend select a group

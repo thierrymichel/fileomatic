@@ -1,0 +1,18 @@
+extends _layout
+
+block content
+  h2 Login
+
+  if isAdmin
+      p Vous êtes déjà connecté !
+  else
+    form(action="/login" method="POST")
+      // input(type="hidden" name="_csrf" value=csrf)
+      label(for="email") email
+        input(type="email" name="email" id="email" placeholder="johndoe@somewhere.com" required)
+      label(for="password") password
+        input(type="password" name="password" id="password" required)
+      button(type="submit") se connecter
+
+  p
+    a(href="/") homepage

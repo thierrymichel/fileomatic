@@ -10,6 +10,8 @@ html(lang="fr")
       include _flashes
 
       header
+        if isAdmin
+          a(href="/logout") logout
         h1= title
 
       block content

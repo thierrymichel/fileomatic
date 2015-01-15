@@ -2,11 +2,11 @@
 'use strict';
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/queue');
+mongoose.connect('mongodb://localhost/fileomatic');
 
 var db = mongoose.connection;
 db.on('error', function () {
-  console.error('✘ CANNOT CONNECT TO mongoDB DATABASE queue!'.red);
+  console.error('✘ CANNOT CONNECT TO mongoDB DATABASE fileomatic!'.red);
 });
 
 module.exports = function (onceReady) {
