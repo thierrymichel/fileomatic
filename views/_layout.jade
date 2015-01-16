@@ -12,6 +12,8 @@ html(lang="fr")
       header
         if isAdmin
           a(href="/logout") logout
+          |  - 
+          a(href="/admin/groups") admin groups
         h1= title
 
       block content

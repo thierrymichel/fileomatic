@@ -20,6 +20,12 @@ var singleton = module.exports = function socketsController(server) {
       .on('register', function (data) {
         console.log('register on socket #' + socket.id);
         socket.join(data.group);
+      })
+      .on('closing', function (data) {
+        console.log('closing from socket #' + socket.id);
+        socket.broadcast.to(data.group).emit('closed', {
+          action: 'closed'
+        });
       });
   });
 

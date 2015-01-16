@@ -2,7 +2,7 @@ extends _layout
 
 block content
   div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-group="#{session.groupId}")
-    h2 Hi #{session.userPseudo}, you are into #{session.groupName}
+    h2 Hi #{session.pseudo}, you are into #{session.groupName}
     h1 Id = #{session.userId}
 
     div.group__serving
@@ -16,7 +16,10 @@ block content
       ol.list
         if penders.length
           each pender in penders
-            li(data-q-id="#{pender.id}") #{pender.pseudo}
+            li(data-q-id="#{pender.id}")
+              if pender.ticket > 0
+                strong.ticket #{formatZero(pender.ticket)}
+              | #{pender.pseudo}
 
     div.group__watching
       h3 watching
@@ -27,6 +30,6 @@ block content
               if watcher.id == session.userId
                 a.get-in(href="#") Take a ticket
 
-    if session.userStatus
-      form.leave(action="/groups/#{session.groupId}?_method=DELETE" method="post")
-        button(type="submit") leave
+    - var action = (isAdmin) ? 'close' : 'leave'
+    form(action="/groups/#{session.groupId}/#{action}" method="post" class="#{action}")
+      button(type="submit") #{action}

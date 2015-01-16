@@ -4,10 +4,12 @@
 (function ($) {
   'use strict';
 
-  var $group,
+  var origin = window.location.origin,
+    $group,
     groupId,
     $getIn,
-    $getOut;
+    $getOut,
+    socket;
 
   function initGroup() {
 
@@ -25,19 +27,21 @@
       var msg = 'You will leave the group!';
       return msg;
     };
-    // et redirect en cas de refresh
+    // et redirect en cas de refresh (pas redirect mais action leave/close)
     $(window).on('unload', function () {
       console.log('bye bye…');
-      window.location = 'http://localhost:8080/';
+      // window.location = origin;
+      $('.leave, .close').trigger('submit');
     });
-    // sauf lorsqu'on clique sur LEAVE
-    $('.leave').on('submit', function () {
+    // sauf lorsqu'on clique sur LEAVE / CLOSE
+    $('.leave, .close').on('submit', function () {
       // e.preventDefault();
       window.onbeforeunload = null;
       $(window).off('unload');
     });
-
-
+    $('.close').on('submit', function () {
+      socket.emit('closing', { group: groupId });
+    });
 
     /*
      * Controls settings
@@ -79,8 +83,7 @@
    * Sockets settings
    */
   function initSockets() {
-    // var socket = io.connect('http://localhost:8080');
-    var socket = io.connect('http://localhost:8080');
+    socket = io.connect(origin);
     socket
       .on('connect', function () {
         console.log('register');
@@ -108,7 +111,7 @@
             .prepend('<strong class="ticket">' + data.ticket + '</strong>')
             .appendTo('.group__pending .list')
             .fadeIn(300);
-          $getOut.show();
+          $(this).find('.get-out').show();
         });
       })
       // or GET-OUT the queue -> from pending to watching
@@ -120,8 +123,20 @@
           $(this)
             .appendTo('.group__watching .list')
             .fadeIn(300);
-          $getIn.show();
+          $(this).find('.get-in').show();
         });
+      })
+      // or admin CLOSE the group
+      .on('closed', function (data) {
+        console.log(data.action);
+        window.alert('Le groupe a été fermé par l\'admin !');
+        window.setTimeout(
+          function () {
+            // window.location = origin;
+            $('.leave').trigger('submit');
+          },
+          500
+        );
       });
   }
 

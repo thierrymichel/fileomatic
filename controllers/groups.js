@@ -12,33 +12,59 @@ var Group     = require('../models/group');
 var User      = require('../models/user');
 var realTime  = require('../controllers/web-sockets');
 
-function displayGroup(req, res) {
+var isRefreshed;
+
+function displayGroup(req, res, groupId) {
   console.log('displayGroup');
+
+  // Get the content of the group
+  Q
+    .all([
+      User.getServing(groupId),
+      User.getPending(groupId),
+      User.getWatching(groupId)
+    ])
+    .then(function (results) {
+      res.render('group', {
+        server: results[0],
+        penders: results[1],
+        watchers: results[2]
+      });
+    });
+}
+
+function openGroup(req, res) {
+  console.log('openGroup');
+  if (!isRefreshed(req, res, 'master')) {
+    var groupId = req.body.groupId;
+
+    Group.findByIdAndUpdate(groupId, { $set: { openedAt: Date.now()}}, function (err, group) {
+      req.session.userId = 'master';
+      req.session.pseudo = 'master';
+      req.session.groupId = group._id;
+      req.session.groupName = group.name;
+
+      // no notification needed (because the group was closed ;)
+
+      displayGroup(req, res, groupId);
+    });
+  }
 }
 
 function joinGroup(req, res) {
+  console.log('joinGroup');
+
   // check if already joined (refresh)
-  if (req.body.pseudo === req.session.userPseudo) {
-    console.log('already here!');
-    User.remove({
-      pseudo: req.session.userPseudo,
-      groupId: req.session.groupId
-    }, function () {
-      console.log('deleted!');
-      realTime.sockets.in(req.session.groupId).emit('leaving', {
-        action: 'leaving',
-        id: req.session.userId
-      });
-      // req.flash('success', 'Goodbye!');
-      req.session = null;   // "fin" session
-      res.redirect('/');
-    });
-  } else {
-    // else create, register, etc…
+  if (!isRefreshed(req, res, req.body.pseudo)) {
+
+    // create, register, etc…
+    var pseudo = req.body.pseudo,
+      groupId = req.body.groupId;
+
     Q
       .all([
-        User.create({ pseudo: req.body.pseudo, groupId: req.body.groupId }),
-        Group.findById(req.body.groupId).exec()
+        User.create({ pseudo: pseudo, groupId: groupId }),
+        Group.findById(groupId).exec()
       ])
       .spread(function (user, group) {
 
@@ -46,7 +72,7 @@ function joinGroup(req, res) {
         res.cookie('pseudo', user.pseudo);
         // save session informations (pour quoi faire si pas de rechargement possible du groupe ? Peut-être mis dans le "render" ?)
         req.session.userId = user._id;
-        req.session.userPseudo = user.pseudo;
+        req.session.pseudo = user.pseudo;
         req.session.userStatus = user.status;
         req.session.groupId = group._id;
         req.session.groupName = group.name;
@@ -55,26 +81,37 @@ function joinGroup(req, res) {
         realTime.sockets.in(req.session.groupId).emit('joining', {
           action: 'joining',
           id: req.session.userId,
-          pseudo: req.session.userPseudo
+          pseudo: req.session.pseudo
         });
 
-        // Get the content of the group
-        Q
-          .all([
-            User.getServing(req.body.groupId),
-            User.getPending(req.body.groupId),
-            User.getWatching(req.body.groupId)
-          ])
-          .then(function (results) {
-            res.render('group', {
-              server: results[0],
-              penders: results[1],
-              watchers: results[2]
-            });
-          });
+        displayGroup(req, res, groupId);
       });
   }
 }
+
+function closeGroup(req, res) {
+  Group.findByIdAndUpdate(req.session.groupId, { $unset: { openedAt: ''}}, function (err, group) {
+    console.log('group closed');
+    // realTime.sockets.in(req.session.groupId).emit('closing', {
+
+    // req.flash('success', 'Goodbye!');
+    req.session.pseudo = null;   // "reset" session
+    res.redirect('/');
+  });
+}
+
+function leaveGroup(req, res) {
+  User.findByIdAndRemove(req.session.userId, function () {
+    realTime.sockets.in(req.session.groupId).emit('leaving', {
+      action: 'leaving',
+      id: req.session.userId
+    });
+    // req.flash('success', 'Goodbye!');
+    req.session = null;   // "fin" session
+    res.redirect('/');
+  });
+}
+
 function handleGroup(req, res) {
   // si pas de methode additionnelle (DELETE ou PUT)
   var method = req.query._method || 'POST';
@@ -94,8 +131,29 @@ function handleGroup(req, res) {
   }
 }
 
-module.exports = function queueController(app) {
-  app.post('/groups', joinGroup);
+
+isRefreshed = function (req, res, pseudo) {
+  // if pseudo already into session -> already joined/opened -> refresh non supported -> goodbye! :)
+  if (pseudo === req.session.pseudo) {
+    if (req.user) {
+      console.log('already opened!');
+      closeGroup(req, res);
+    } else {
+      console.log('already joined!');
+      leaveGroup(req, res);
+    }
+    return true;
+  }
+  return false;
+}
+
+module.exports = function groupController(app) {
+  app.post('/groups/join', joinGroup);
+  app.post('/groups/open', openGroup);
+
+  app.post('/groups/:id/leave', leaveGroup);
+  app.post('/groups/:id/close', closeGroup);
+/*
   // finalement, pas de display direct via GET... On "join" via POST et puis c'est tout !
   // Sinon, on repasse par la case départ :)))
   app.route('/groups/:id')
@@ -105,6 +163,7 @@ module.exports = function queueController(app) {
       res.redirect('/');
     })
     .post(handleGroup);
+*/
 };
 
 

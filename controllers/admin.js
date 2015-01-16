@@ -107,7 +107,7 @@ module.exports = function adminController(app) {
   app.route('/login')
     .get(login)
     .post(passport.authenticate('login', {
-      successRedirect: '/admin/groups',
+      successRedirect: '/',
       failureRedirect: '/login',
       failureFlash: true
     }));
