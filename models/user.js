@@ -9,6 +9,7 @@ var userSchema = mongoose.Schema({
   groupId:  { type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: true },
   joinedAt: { type: Date, default: Date.now },
   queuedAt: { type: Date },
+  ticket:   { type: Number, default: 0 },
   status:   { type: String, default: 'watching'}
 });
 

@@ -1,7 +1,7 @@
 extends _layout
 
 block content
-  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-status="#{session.userStatus}" data-q-group="#{session.groupId}")
+  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-group="#{session.groupId}")
     h2 Hi #{session.userPseudo}, you are into #{session.groupName}
     h1 Id = #{session.userId}
 
@@ -24,8 +24,8 @@ block content
         if watchers.length
           each watcher in watchers
             li(data-q-id="#{watcher.id}" class=(watcher.id == session.userId ? "active" : "")) #{watcher.pseudo}
-
-      button.get-in(type="button") Take a ticket
+              if watcher.id == session.userId
+                a.get-in(href="#") Take a ticket
 
     if session.userStatus
       form.leave(action="/groups/#{session.groupId}?_method=DELETE" method="post")

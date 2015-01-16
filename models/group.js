@@ -8,7 +8,7 @@ var groupSchema = mongoose.Schema({
   name:         { type: String, required: true },
   createdAt:    { type: Date, default: Date.now },
   description:  { type: String, required: true },
-  userNb:       { type: Number, default: 0 }
+  ticket:       { type: Number, default: 0 }
 });
 
 _.extend(groupSchema.statics, {

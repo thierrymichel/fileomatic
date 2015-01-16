@@ -13,26 +13,7 @@ var User      = require('../models/user');
 var realTime  = require('../controllers/web-sockets');
 
 function displayGroup(req, res) {
-  // si session, on affiche le groupe en détails
-  if (req.session.userId) {
-    Q
-      .all([
-        User.getServing(req.params.id),
-        User.getPending(req.params.id),
-        User.getWatching(req.params.id)
-      ])
-      .then(function (results) {
-        // console.log(results);
-        res.render('group', {
-          server: results[0],
-          penders: results[1],
-          watchers: results[2]
-        });
-        console.log('current status', req.session.userStatus);
-      });
-  } else {
-    res.redirect('/');
-  }
+  console.log('displayGroup');
 }
 
 function joinGroup(req, res) {
@@ -127,23 +108,24 @@ module.exports = function queueController(app) {
 };
 
 
-// Utilisation de 'async' + note
-/* Note
-  .create() peut renvoyer une Promise ou être utilisé avec un callback (optionnel).
-  C'est le cas avec le module 'async'.
-  .findById() fonctionne de la même manière ! la méthode renvoie la query ou exécute le callback. Tout comme la méthode .exec() présente dans .getName()...
-      ```
-      getName: function getNameQueue(id) {
-        return this
-          .findById(id)
-          .exec();
-      }
-      ```
-  Mais comme .exec() est utilisé sans callback (et renvoit donc une Promise), getName() ne fonctionne pas dans ce contexte.
-  Pfiouuu…
-  Pour plus tard essayer avec les Promises plutôt que 'async' (genre module Q -> voir supra !!!)
-  */
 /*
+Utilisation de 'async' (ancien code, remplacé par Q et ses promises…)
+
+# Note
+async permet d'exécuter plusieurs fonctions asynchrones en parallèle et d'effectuer leur callback ensemble, à la fin !
+
+Les méthodes .create(), .findById() ou .exec() (mongoose) peuvent être utilisées avec un callback (optionnel). Sinon, elles renvoient respectivement une <Promise> ou la <query>
+
+Dans notre cas, notre propre méthode .getName(), qui renvoie .exec(), n'utilise pas de callback ! Il n'est donc pas utilisable avec "async" (j'ai pas trouvé)…
+Il faut donc "dupliquer" la méthode .getName(), ce qui est un peu bête…
+
+```
+getName: function getNameQueue(id) {
+  return this
+    .findById(id)
+    .exec();
+}
+```
 async.parallel(
   {
     user: function (callback) {
