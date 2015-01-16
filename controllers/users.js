@@ -13,29 +13,45 @@ var User      = require('../models/user');
 var zeroFill = require('zero-fill');
 var realTime  = require('../controllers/web-sockets');
 
-function updateUser(req, groupId, userId, changes) {
+function updateUser(req, res, groupId, userId, changes) {
+  console.log('changes:' + changes.$set.status);
+
   User.findByIdAndUpdate(userId, changes, function () {
     realTime.sockets.in(groupId).emit(changes.$set.status, {
       action: changes.$set.status,
-      id: req.session.userId,
+      id: userId,
       ticket: zeroFill(3, changes.$set.ticket)
     });
     req.session.userStatus = changes.$set.status;
     console.log('new status', req.session.userStatus);
+    res.status(200).end();
     //res.redirect('/groups/' + req.session.groupId);
   });
 }
 
 function handleUser(req, res) {
   // si pas de methode additionnelle (DELETE ou PUT)
-  var method = req.query._method || 'POST',
+  var action = req.query.action || 'watching',
     userId = req.body.userId,
     groupId = req.body.groupId,
     changes = {};
 
-  switch (method) {
+  switch (action) {
+
+  // (re)start watching
+  case 'watching':
+    changes = {
+      $set: {
+        status: 'watching',
+        ticket: 0
+      },
+      $unset: { queuedAt: '' }
+    };
+    updateUser(req, res, groupId, userId, changes);
+    break;
+
   // start pending
-  case 'POST':
+  case 'pending':
     changes = {
       $set : {
         status: 'pending',
@@ -46,20 +62,17 @@ function handleUser(req, res) {
     Group.findByIdAndUpdate(groupId, { $inc: { ticket: 1 }}, function (err, group) {
       // console.log('get a ticket');
       changes.$set.ticket = group.ticket;
-      updateUser(req, groupId, userId, changes);
+      updateUser(req, res, groupId, userId, changes);
     });
     break;
 
-  // (re)start watching
-  case 'DELETE':
+  case 'serving':
     changes = {
-      $set: {
-        status: 'watching',
-        ticket: 0
-      },
-      $unset: { queuedAt: '' }
+      $set : {
+        status: 'serving'
+      }
     };
-    updateUser(req, groupId, userId, changes);
+    updateUser(req, res, groupId, userId, changes);
     break;
   }
 }

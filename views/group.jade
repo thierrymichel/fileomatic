@@ -1,7 +1,7 @@
 extends _layout
 
 block content
-  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-group="#{session.groupId}")
+  div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-group="#{session.groupId}" class=(isAdmin) ? "admin" : "user")
     h2 Hi #{session.pseudo}, you are into #{session.groupName}
     h1 Id = #{session.userId}
 
@@ -9,7 +9,9 @@ block content
       h3 serving
       ul.list
       if server
-        li(data-q-id="#{pender.id}") #{pender.pseudo}
+        li(data-q-id="#{pender.id}")
+          strong.ticket #{formatZero(server.ticket)}
+          |  #{pender.pseudo}
 
     div.group__pending
       h3 pending
@@ -19,7 +21,7 @@ block content
             li(data-q-id="#{pender.id}")
               if pender.ticket > 0
                 strong.ticket #{formatZero(pender.ticket)}
-              | #{pender.pseudo}
+              |  #{pender.pseudo}
 
     div.group__watching
       h3 watching

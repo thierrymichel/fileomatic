@@ -7,17 +7,12 @@
   var origin = window.location.origin,
     $group,
     groupId,
-    $getIn,
-    $getOut,
     socket;
 
   function initGroup() {
 
     var url = $group.data('q-url');
-
     groupId = $group.data('q-group');
-    $getIn = $('.get-in');
-    $getOut = $('<a href="#" class="get-out">cancel</a>').hide();
 
     /*
      * window handling
@@ -48,13 +43,15 @@
      */
 
     // add hidden "cancel" link
-    $group.find('.active').append($getOut);
+    $('<a href="#" class="get-out">cancel</a>')
+      .hide()
+      .appendTo('.active');
 
     // get in/out the queue
     // get the ID of the clicked item
     // hide the clicked link/button
     // post ajax call
-    $getIn.add($getOut).on('click', function (e) {
+    $group.on('click', '.get-in, .get-out, .get-serve', function (e) {
       e.preventDefault();
 
       var $this = $(this),
@@ -62,8 +59,19 @@
         userId = $this.parent('li').data('q-id'),
         actionURL = url;
 
-      if (action === 'get-out') {
-        actionURL += '?_method=DELETE';
+      switch (action) {
+
+      case 'get-out':
+        actionURL += '?action=watching';
+        break;
+
+      case 'get-in':
+        actionURL += '?action=pending';
+        break;
+
+      case 'get-serve':
+        actionURL += '?action=serving';
+        break;
       }
 
       console.log(action);
@@ -102,28 +110,67 @@
           $(this).remove();
         });
       })
-      // or GET-IN the queue -> from watching to pending
-      .on('pending', function (data) {
+
+      // or GET-OUT the queue -> from pending/serving to watching
+      .on('watching', function (data) {
+
         console.log(data.action);
 
         $('[data-q-id="' + data.id + '"]').fadeOut(300, function () {
-          $(this)
+          var $this = $(this);
+
+          if ($group.hasClass('admin')) {
+            $this.find('.get-serve').remove();
+            $this.find('.get-out').remove();
+            $('.get-serve').show();
+          }
+
+          $this.find('.ticket').remove();
+          $this
+            .appendTo('.group__watching .list')
+            .fadeIn(300);
+
+          $this.find('.get-in').show();
+        });
+      })
+      // or GET-IN the queue -> from watching to pending
+      .on('pending', function (data) {
+
+        console.log(data.action);
+
+        $('[data-q-id="' + data.id + '"]').fadeOut(300, function () {
+          var $this = $(this);
+
+          if ($group.hasClass('admin')) {
+            $this.append('<a href="#" class="get-serve">serve</a>');
+          }
+
+          $this
             .prepend('<strong class="ticket">' + data.ticket + '</strong>')
             .appendTo('.group__pending .list')
             .fadeIn(300);
-          $(this).find('.get-out').show();
+          $this.find('.get-out').show();
+
         });
       })
-      // or GET-OUT the queue -> from pending to watching
-      .on('watching', function (data) {
+      // or GET-SERVE the queue -> from pending to serving
+      .on('serving', function (data) {
+
         console.log(data.action);
 
         $('[data-q-id="' + data.id + '"]').fadeOut(300, function () {
-          $(this).find('.ticket').remove();
-          $(this)
-            .appendTo('.group__watching .list')
+          var $this = $(this);
+
+          if ($group.hasClass('admin')) {
+            $this.find('.get-serve').remove();
+            $('.get-serve').hide();
+            $this.append('<a href="#" class="get-out">done</a>');
+          } else {
+            $this.find('.get-out').hide();
+          }
+          $this
+            .appendTo('.group__serving .list')
             .fadeIn(300);
-          $(this).find('.get-in').show();
         });
       })
       // or admin CLOSE the group
