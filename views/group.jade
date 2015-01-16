@@ -2,11 +2,11 @@ extends _layout
 
 block content
   div.group(data-q-url="/groups/#{session.groupId}/users/#{session.userId}" data-q-group="#{session.groupId}" class=(isAdmin) ? "admin" : "user")
-    h2 Hi #{session.pseudo}, you are into #{session.groupName}
+    h2 Salut #{session.pseudo}, groupe #{session.groupName}
     h1 Id = #{session.userId}
 
     div.group__serving
-      h3 serving
+      h3 En cours
       ul.list
       if server
         li(data-q-id="#{pender.id}")
@@ -14,7 +14,7 @@ block content
           |  #{pender.pseudo}
 
     div.group__pending
-      h3 pending
+      h3 File d'attente
       ol.list
         if penders.length
           each pender in penders
@@ -24,14 +24,14 @@ block content
               |  #{pender.pseudo}
 
     div.group__watching
-      h3 watching
+      h3 Connectés
       ul.list
         if watchers.length
           each watcher in watchers
             li(data-q-id="#{watcher.id}" class=(watcher.id == session.userId ? "active" : "")) #{watcher.pseudo}
               if watcher.id == session.userId
-                a.get-in(href="#") Take a ticket
+                a.get-in(href="#") prendre un ticket
 
     - var action = (isAdmin) ? 'close' : 'leave'
     form(action="/groups/#{session.groupId}/#{action}" method="post" class="#{action}")
-      button(type="submit") #{action}
+      button(type="submit") #{(isAdmin) ? 'fermer' : 'quitter'}

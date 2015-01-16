@@ -19,7 +19,7 @@
      */
     // alerte en cas refresh, close, etoussa
     window.onbeforeunload = function () {
-      var msg = 'You will leave the group!';
+      var msg = 'Attetion, tu vas quitter ce groupe !';
       return msg;
     };
     // et redirect en cas de refresh (pas redirect mais action leave/close)
@@ -43,7 +43,7 @@
      */
 
     // add hidden "cancel" link
-    $('<a href="#" class="get-out">cancel</a>')
+    $('<a href="#" class="get-out">annuler</a>')
       .hide()
       .appendTo('.active');
 
@@ -142,7 +142,7 @@
           var $this = $(this);
 
           if ($group.hasClass('admin')) {
-            $this.append('<a href="#" class="get-serve">serve</a>');
+            $this.append('<a href="#" class="get-serve">servir</a>');
           }
 
           $this
@@ -164,7 +164,7 @@
           if ($group.hasClass('admin')) {
             $this.find('.get-serve').remove();
             $('.get-serve').hide();
-            $this.append('<a href="#" class="get-out">done</a>');
+            $this.append('<a href="#" class="get-out">terminé</a>');
           } else {
             $this.find('.get-out').hide();
           }

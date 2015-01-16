@@ -6,44 +6,29 @@ block content
   form(action="/groups#{(isAdmin) ? '/open' : '/join'}" method="POST")
     ol
       li
-        label(for="pseudo") Choose a pseudo
+        label(for="pseudo") Choisis ton pseudo
           - pseudo = (typeof cookie.pseudo !== 'undefined') ? cookie.pseudo : ''
           - pseudo = (isAdmin) ? 'master' : pseudo
           input(type="text" name="pseudo" id="pseudo" value="#{pseudo}" required disabled=isAdmin)
       li
         fieldset
-          legend select a group
+          legend Choisis un groupe
 
-          if isAdmin
-            if closed.length
-              each group, index in closed
-                label(for="#{group.name}")
-                  input(type="radio" name="groupId" id="#{group.name}" value="#{group.id}" required checked=index===0)
-                  |  #{group.name}
-                  small - #{group.description}
-                br
-            else
-              p Oups! aucun groupe fermé…
-
+          if avalaible.length
+            each group, index in avalaible
+              label(for="#{group.name}")
+                input(type="radio" name="groupId" id="#{group.name}" value="#{group.id}" required checked=index===0)
+                |  #{group.name}
+                small - #{group.description}
+              br
           else
-            if opened.length
-              each group, index in opened
-                label(for="#{group.name}")
-                  input(type="radio" name="groupId" id="#{group.name}" value="#{group.id}" required checked=index===0)
-                  |  #{group.name}
-                  small - #{group.description}
-            else
-              p Oups! aucun groupe ouvert…
+            p Oups! aucun groupe…
 
-        if isAdmin
-          if openedNames.length
-            p
-              strong #{openedNames.length} groupe(s) fermé(s)
-              |  : #{openedNames.join(', ')}
-        else
-          if closedNames.length
-            p
-              strong #{closedNames.length} groupe(s) fermé(s)
-              |  : #{closedNames.join(', ')}
 
-    button(type="submit") #{(isAdmin) ? 'open' : 'join'}
+        if unavalaible.length
+          p
+            strong #{unavalaible.length} groupe(s) #{(isAdmin) ? 'ouvert' : 'fermé'}(s)
+            |  : #{unavalaible.join(', ')}
+
+    if avalaible.length
+      button(type="submit") #{(isAdmin) ? 'ouvrir' : 'rejoindre'}

@@ -23,11 +23,12 @@ module.exports = function homeController(app) {
         Group.getClosed()
       ])
       .then(function (results) {
+        var avalaible = (req.user) ? results[1] : results[0],
+          unavalaible = _.pluck((req.user) ? results[0] : results[1], 'name');
+
         res.render('home', {
-          opened: results[0],
-          openedNames: _.pluck(results[0], 'name'),
-          closed: results[1],
-          closedNames: _.pluck(results[1], 'name')
+          avalaible: avalaible,
+          unavalaible: unavalaible
         });
       });
   });
