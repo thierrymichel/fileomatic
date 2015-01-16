@@ -2,7 +2,7 @@
   "name": "fileomatic",
   "version": "0.0.1",
   "engines": {
-    "node": "> 0.10"
+    "node": ">= 0.10.0"
   },
   "description": "A queue system",
   "main": "server.js",
