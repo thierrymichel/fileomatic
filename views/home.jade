@@ -14,12 +14,36 @@ block content
         fieldset
           legend select a group
 
-          if groups.length
-            each group, index in groups
-              label(for="#{group.name}")
-                input(type="radio" name="groupId" id="#{group.name}" value="#{group.id}" required checked=index===0)
-                |  #{group.name}
-              br
+          if isAdmin
+            if closed.length
+              each group, index in closed
+                label(for="#{group.name}")
+                  input(type="radio" name="groupId" id="#{group.name}" value="#{group.id}" required checked=index===0)
+                  |  #{group.name}
+                  small - #{group.description}
+                br
+            else
+              p Oups! aucun groupe fermé…
+
           else
-            p Oups! Currently no groups…
+            if opened.length
+              each group, index in opened
+                label(for="#{group.name}")
+                  input(type="radio" name="groupId" id="#{group.name}" value="#{group.id}" required checked=index===0)
+                  |  #{group.name}
+                  small - #{group.description}
+            else
+              p Oups! aucun groupe ouvert…
+
+        if isAdmin
+          if openedNames.length
+            p
+              strong #{openedNames.length} groupe(s) fermé(s)
+              |  : #{openedNames.join(', ')}
+        else
+          if closedNames.length
+            p
+              strong #{closedNames.length} groupe(s) fermé(s)
+              |  : #{closedNames.join(', ')}
+
     button(type="submit") #{(isAdmin) ? 'open' : 'join'}

@@ -5,8 +5,9 @@
  * Home controller
  */
 
-var Group = require('../models/group');
 var _ = require('underscore');
+var Q = require('q');
+var Group = require('../models/group');
 var realTime  = require('../controllers/web-sockets');
 
 module.exports = function homeController(app) {
@@ -16,10 +17,18 @@ module.exports = function homeController(app) {
   });
 
   app.get('/', function (req, res) {
-    Group
-      .getAll()
-      .then(function (groups) {
-        res.render('home', { groups: groups });
+    Q
+      .all([
+        Group.getOpened(),
+        Group.getClosed()
+      ])
+      .then(function (results) {
+        res.render('home', {
+          opened: results[0],
+          openedNames: _.pluck(results[0], 'name'),
+          closed: results[1],
+          closedNames: _.pluck(results[1], 'name')
+        });
       });
   });
 };

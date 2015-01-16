@@ -123,9 +123,9 @@ module.exports = function adminController(app) {
   // app.get('/createadmin', function (req, res) {
   //   Admin
   //     .create({
-  //       username: 'username',
-  //       email: 'email',
-  //       password: bCrypt.hashSync('password', 8)
+  //       username: 'test',
+  //       email: 'test@test.com',
+  //       password: bCrypt.hashSync('test', 8)
   //     })
   //     .then(function (admin) {
   //       req.flash('success', 'Admin "' + admin.username + '" added!');

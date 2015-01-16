@@ -19,6 +19,20 @@ _.extend(groupSchema.statics, {
       .sort({ name: 'asc' })
       .exec();
   },
+  getClosed: function getAllClosedGroups() {
+    return this
+      .find()
+      .exists('openedAt', false)
+      .sort({ name: 'asc' })
+      .exec();
+  },
+  getOpened: function getAllOpenedGroups() {
+    return this
+      .find()
+      .exists('openedAt', true)
+      .sort({ name: 'asc' })
+      .exec();
+  },
   getOne: function getGroupById(groupId) {
     return this
       .findById(groupId)
